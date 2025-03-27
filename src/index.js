@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
 //function for getting all the recipes using GET method
 
     function getRecipes() {
-        fetch("http://localhost:3000/recipes")
+        // fetch("http://localhost:3000/recipes") // https://recipe-server-su9a.onrender.com
+        fetch("https://recipe-server-su9a.onrender.com/recipes")
             .then((res) => res.json())
             .then((data) => {
                 recipes = data;
@@ -90,6 +91,12 @@ sortedRecipes.slice(0, 5).forEach((recipe) => {
     lovedRecipesList.appendChild(listItem);
 
     listItem.addEventListener("click",()=>{
+      
+document.querySelectorAll(".selected").forEach(item=>{
+    item.classList.remove("selected")
+})
+      
+        listItem.classList.toggle("selected");
         mainRecipeCard(recipe)
     })
 });
@@ -105,7 +112,7 @@ sortedRecipes.slice(0, 5).forEach((recipe) => {
         }
         recipe.loves++;
     
-        fetch(`http://localhost:3000/recipes/${recipe.id}`, { 
+        fetch(`https://recipe-server-su9a.onrender.com/recipes/${recipe.id}`, { 
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -190,9 +197,13 @@ sortedRecipes.slice(0, 5).forEach((recipe) => {
 
       //close button functionality
       const closeProcedure = document.querySelector(".close-procedure");
-      closeProcedure.addEventListener("click", () => {
+      closeProcedure.addEventListener("click", (e) => {
+
+
         procedureCard.style.display = "none";
         recipeCardsContainer.classList.remove("blurred");
+
+
       })
     }
 
@@ -200,9 +211,10 @@ sortedRecipes.slice(0, 5).forEach((recipe) => {
     //function for adding recipes
     const addBtn=document.querySelector(".add-btn")
 
-    addBtn.addEventListener("click", () => {
+    addBtn.addEventListener("click", (e) => {
         
         formContainer.classList.remove('hidden');
+// e.stopPropagation()
         
     });
     closeFormBtn.addEventListener("click",()=>{
@@ -282,7 +294,8 @@ sortedRecipes.slice(0, 5).forEach((recipe) => {
         displayCards(newRecipeData);
         formContainer.classList.add('hidden');
     
-        fetch("http://localhost:3000/recipes", {
+        // fetch("http://localhost:3000/recipes", {
+            fetch("https://recipe-server-su9a.onrender.com/recipes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -300,6 +313,35 @@ sortedRecipes.slice(0, 5).forEach((recipe) => {
 
 
     }
+
+
+    let slideIndex = 0;
+
+// Function to show slides
+function showSlides() {
+    let slides = document.querySelectorAll(".slide");
+    // Hide all slides
+    slides.forEach(slide => slide.style.display = "none"); 
+   // Move to the next slide
+    slideIndex++; 
+    // Reset to first slide if at the end
+    if (slideIndex > slides.length) {
+        slideIndex = 1; 
+    }
+    // Show the current slide
+    slides[slideIndex - 1].style.display = "block"; 
+    setTimeout(showSlides, 3000); 
+}
+
+// Function to change slide manually
+function changeSlide(n) {
+    slideIndex += n - 1; 
+    showSlides();
+}
+
+// Start the slideshow
+showSlides();
+
 
 
 
