@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+   
+      
+      
+    
+    
+
+    <title>RECIPE SHARING PLATFORM</title>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <div class="logo"><i class="fa-solid fa-kitchen-set"></i></div>
+            <div><h2>KASH'S KITCHEN</h2>
+            <h3>let's cook love</h3></div>
+        </div>
+        <div  class="div-add-btn"><button class="add-btn">Share your recipe</button></div>
+    </header>
+    <div id="formContainer" class="hidden">
+        <form id="recipeForm">
+            <h2>Add a New Recipe</h2>
+            <div class="form-group" >
+                <label for="recipeName">Recipe Name:</label>
+                <input type="text" id="recipeName" name="recipeName" required>
+            </div>
+            <div class="form-group" >
+                <label for="recipeDesc">Recipe Description:</label>
+                <input type="text" id="recipeDesc" name="recipeDesc" required>
+            </div>
+            <div class="form-group" >
+                <label for="recipeImage">Recipe Image:</label>
+                <input type="text" id="recipeImage" name="recipeImage" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="ingredientInput">Ingredient:</label>
+                <input type="text" id="ingredientInput" name="ingredientInput">
+                <button type="button" id="addIngredientBtn">Add Ingredient</button>
+            </div>
+            <ul id="ingredientList"></ul>
+            
+            <div class="form-group">
+                <label for="procedureInput">procedure:</label>
+                <input type="text" id="procedureInput" name="procedureInput">
+                <button type="button" id="addProcedureBtn">Add procedure</button>
+            </div>
+            <div class="form-group" >
+              <label for="recipeOwner">Recipe Owner:</label>
+              <input type="text" id="recipeOwner" name="recipeOwner" required>
+          </div>
+            <ul id="procedureList"></ul>
+            <div class="form-actions">
+                <button type="submit">Submit</button>
+                <button type="button" id="closeFormBtn">Close</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Welcome to Our Recipe Collection</h1>
+        <p>Discover and share the best recipes from around the world.</p>
+        <a href="#main-section" class="btn">Explore Recipes</a>
+      </div>
+    </div>
+    
+
+    <div class="search-area">
+        <input class="search-text" type="text" placeholder="Search for a recipe">
+        <button class="search-button">search</button>
+    </div>
+    
+    <section id="main-section">
+    <aside>
+      <h2>Top recipes</h2>
+        <ul class="loved-recipes-list">
+          
+        </ul>
+    </aside>
+    <main class="recipe-cards-container">
+        
+
+     
+      </main>
+      <div class="procedure-card">
+heeere
+      </div>
+</section>
+
+    <footer></footer>
+    <script src="/src/index.js"></script>
+</body>
+</html>
