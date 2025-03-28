@@ -73,11 +73,11 @@ document.addEventListener("DOMContentLoaded", function () {
             event.stopPropagation();
             event.preventDefault();
 
-            // Toggle "love"
+            
             if (loveButton.querySelector('.fa-regular')) {
                 addLoves(recipe, loveButton);
             } else {
-              //if solid heart is present, add the love first, then remove it.
+              
                 
                 removeLove(recipe, loveButton);
             }
