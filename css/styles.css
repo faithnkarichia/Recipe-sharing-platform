@@ -474,6 +474,21 @@ main ol li{
    .love-btn:hover {
     transform: scale(1.1);
   }
+#about-us{
+    display: flex;
+    
+}
+  .about-container{
+    text-align: center;
+    width:800px;
+    margin: 0 auto;
+    line-height: 1.5;
+    font-size: 1.3rem;
+    background-color: #BDBDBD;
+    padding: 30px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+   
+  }
   /* footer stylings */
   footer {
     background-color: #EEEEEE;
