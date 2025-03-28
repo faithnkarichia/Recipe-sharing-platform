@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchText = document.querySelector(".search-text");
   const searchBtn = document.querySelector(".search-button");
   const procedureCard = document.querySelector(".procedure-card");
-  recipes = [];
+ 
   const lovedRecipesList = document.querySelector(".loved-recipes-list");
 
   const addIngredientBtn = document.getElementById("addIngredientBtn");
@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const procedureList = document.getElementById("procedureList");
   const recipeImage = document.getElementById("recipeImage");
   const recipeOwner = document.getElementById("recipeOwner");
+  let recipes = [];
 
   //function for getting all the recipes using GET method
 
@@ -205,72 +206,35 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-addIngredientBtn.addEventListener("click", function () {
-    const ingredient = ingredientInput.value.trim();
-    if (ingredient) {
+  function addListItemWithEdit(inputElement, listElement, textClassName) {
+    const value = inputElement.value.trim();
+    if (value) {
       const listItem = document.createElement("li");
-      
-      // Create container for ingredient text
-      const ingredientText = document.createElement("span");
-      ingredientText.className = "ingredient-text"; 
-      ingredientText.textContent = ingredient;
-      
-      // Create edit button
+      const textElement = document.createElement("span");
+      textElement.className = textClassName;
+      textElement.textContent = value;
       const editBtn = document.createElement("button");
       editBtn.textContent = "edit";
       editBtn.classList.add("edit");
-      
-      // Append elements
-      listItem.appendChild(ingredientText);
+      listItem.appendChild(textElement);
       listItem.appendChild(editBtn);
-      ingredientList.appendChild(listItem);
-      
-      // Clear input
-      ingredientInput.value = "";
-  
-      // Edit button handler
+      listElement.appendChild(listItem);
+      inputElement.value = "";
       editBtn.addEventListener("click", () => {
-        // Get only the ingredient text (from the span)
-        ingredientInput.value = ingredientText.textContent.trim();
+        inputElement.value = textElement.textContent.trim();
         listItem.remove();
       });
     }
+  }
+  
+  addIngredientBtn.addEventListener("click", function () {
+    addListItemWithEdit(ingredientInput, ingredientList, "ingredient-text");
   });
-
+  
   addProcedureBtn.addEventListener("click", function () {
-    const procedure = procedureInput.value.trim();
-    if (procedure) {
-      const listItem = document.createElement("li");
-
-
-      // Create container for ingredient text
-      const procedureText = document.createElement("span");
-      procedureText.className = "ingredient-text"; 
-      procedureText.textContent = procedure;
-      
-      // Create edit button
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "edit";
-      editBtn.classList.add("edit");
-      
-      // Append elements
-      listItem.appendChild(procedureText);
-      listItem.appendChild(editBtn);
-      procedureList.appendChild(listItem);
-      
-      // Clear input
-      procedureInput.value = "";
-  
-      // Edit button handler
-      editBtn.addEventListener("click", () => {
-        // Get only the ingredient text (from the span)
-        procedureInput.value =procedureText.textContent.trim();
-        listItem.remove();
-      });
-
-  
-    }
+    addListItemWithEdit(procedureInput, procedureList, "ingredient-text");
   });
+  
   recipeForm.addEventListener("submit", function (event) {
     event.preventDefault();
     handleFormSubmission();
@@ -323,7 +287,7 @@ addIngredientBtn.addEventListener("click", function () {
 
   //function for editing the ingridients and procedures
 
-  function editIngridientsAndProcedures() {}
+ 
 
   let slideIndex = 0;
 
