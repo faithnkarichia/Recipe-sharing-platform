@@ -63,8 +63,12 @@ The app is deployed on **Vercel**. You can access it here:
 
 ---
 
+## Mobile responsiveness
 
+This application is designed to be responsive, adapting its layout for optimal viewing on various screen sizes.
 
+* For screens with a maximum width of 780 pixels: The layout adjusts to ensure readability and usability on medium-sized screens.
+* For screens with a minimum width of 320 pixels : The layout adapts to fit smaller screens. 
 
 ## Contact
 For any inquiries, reach out via [faynkarichia@gmail.com]
