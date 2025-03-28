@@ -2,10 +2,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const recipeCardsContainer = document.querySelector(
     ".recipe-cards-container"
   );
+  const addBtn = document.querySelector(".add-btn");
   const searchText = document.querySelector(".search-text");
   const searchBtn = document.querySelector(".search-button");
   const procedureCard = document.querySelector(".procedure-card");
- 
+
   const lovedRecipesList = document.querySelector(".loved-recipes-list");
 
   const addIngredientBtn = document.getElementById("addIngredientBtn");
@@ -20,11 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const recipeImage = document.getElementById("recipeImage");
   const recipeOwner = document.getElementById("recipeOwner");
   let recipes = [];
+  let slidePrev = document.querySelector(".prev");
+  let slideNext = document.querySelector(".next");
 
   //function for getting all the recipes using GET method
 
   function getRecipes() {
-    // fetch("http://localhost:3000/recipes") // https://recipe-server-su9a.onrender.com
     fetch("https://recipe-server-su9a.onrender.com/api/recipes")
       .then((res) => res.json())
       .then((data) => {
@@ -32,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
         recipes &&
           recipes.forEach((recipe) => {
             displayCards(recipe);
-            console.log(Object.keys(recipe));
           });
         displayMostLovedRecipes();
       })
@@ -46,36 +47,110 @@ document.addEventListener("DOMContentLoaded", function () {
     let recipeCard = document.createElement("div");
     recipeCard.classList.add("recipe-card");
 
+    const heartIcon = recipe.loves > 0 ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+
     recipeCard.innerHTML = `
-            <h3 class="recipe-title">${recipe.name}</h3>
-            <img src="${recipe.image}" alt="Recipe Image" class="recipe-image">
-            <p class="recipe-description">${recipe.description}</p>
-            <p class="recipe-owner">By: ${recipe.owner}</p>
-            <div class="recipe-actions">
-                
-                <button class="love-btn">${recipe.loves || 0}❤️</button>
-            </div>
-        `;
+        <h3 class="recipe-title">${recipe.name}</h3>
+        <img src="${recipe.image}" alt="Recipe Image" class="recipe-image">
+        <p class="recipe-description">${recipe.description}</p>
+        <p class="recipe-owner">By: ${recipe.owner}</p>
+        <div class="recipe-actions">
+            <button class="love-btn">${recipe.loves || 0}${heartIcon}</button>
+        </div>
+    `;
+
     recipeCardsContainer.appendChild(recipeCard);
 
     recipeCard.addEventListener("click", () => {
-      mainRecipeCard(recipe);
+        mainRecipeCard(recipe);
     });
 
     const loveButton = recipeCard.querySelector(".love-btn");
 
     if (loveButton) {
-      loveButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-        event.preventDefault();
+        loveButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            event.preventDefault();
 
-        addLoves(recipe, loveButton);
-        loveButton.textContent = `${recipe.loves}❤️`;
-      });
+            // Toggle "love"
+            if (loveButton.querySelector('.fa-regular')) { 
+                addLoves(recipe, loveButton);
+            } else {
+                removeLove(recipe, loveButton); 
+            }
+        });
     }
-  }
+}
 
-  //function for displaying most loved recipes
+function addLoves(recipe, loveButton) {
+    if (!recipe.loves) {
+        recipe.loves = 0;
+    }
+    recipe.loves++;
+
+    fetch(`https://recipe-server-su9a.onrender.com/api/recipes/${recipe.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify({ loves: recipe.loves }),
+    })
+    .then((res) => res.json())
+    .then((updatedRecipe) => {
+        console.log("Loves updated:", updatedRecipe);
+        const index = recipes.findIndex((r) => r.id === recipe.id);
+        if (index !== -1) {
+            recipes[index].loves = updatedRecipe.loves;
+        }
+
+        if (loveButton) {
+            loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-solid fa-heart"></i>`; // Filled heart
+        }
+        displayMostLovedRecipes();
+    })
+    .catch((error) => {
+        console.error("Error updating loves:", error);
+    });
+
+    return recipe.loves;
+}
+
+function removeLove(recipe, loveButton) {
+    if (recipe.loves > 0) {
+        recipe.loves--;
+    }
+
+    fetch(`https://recipe-server-su9a.onrender.com/api/recipes/${recipe.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify({ loves: recipe.loves }),
+    })
+    .then((res) => res.json())
+    .then((updatedRecipe) => {
+        console.log("Love removed:", updatedRecipe);
+        const index = recipes.findIndex((r) => r.id === recipe.id);
+        if (index !== -1) {
+            recipes[index].loves = updatedRecipe.loves;
+        }
+
+        if (loveButton) {
+            loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-regular fa-heart"></i>`; 
+        }
+        displayMostLovedRecipes();
+    })
+    .catch((error) => {
+        console.error("Error removing love:", error);
+    });
+
+    return recipe.loves;
+}
+
+
+  //function for displaying most loved recipes on the aside
   function displayMostLovedRecipes() {
     lovedRecipesList.innerHTML = "";
     const sortedRecipes = [...recipes].sort(
@@ -97,41 +172,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  //a function for adding loves when a person clickes on the love button using PATCH method
-  function addLoves(recipe, loveButton) {
-    if (!recipe.loves) {
-      recipe.loves = 0;
-    }
-    recipe.loves++;
-
-    fetch(`https://recipe-server-su9a.onrender.com/api/recipes/${recipe.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ loves: recipe.loves }),
-    })
-      .then((res) => res.json())
-      .then((updatedRecipe) => {
-        console.log("Loves updated:", updatedRecipe);
-        const index = recipes.findIndex((r) => r.id === recipe.id);
-        if (index !== -1) {
-          recipes[index].loves = updatedRecipe.loves;
-        }
-
-        if (loveButton) {
-          loveButton.textContent = `${updatedRecipe.loves}❤️`;
-        }
-        displayMostLovedRecipes();
-      })
-      .catch((error) => {
-        console.error("Error updating loves:", error);
-      });
-
-    return recipe.loves;
-  }
-
+  
   //this is the funnction for searching for a recipe
   function search() {
     let searchValue = searchText.value.trim().toLowerCase();
@@ -194,18 +235,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  //function for adding recipes
-  const addBtn = document.querySelector(".add-btn");
-
   addBtn.addEventListener("click", (e) => {
     formContainer.classList.remove("hidden");
-    // e.stopPropagation()
   });
   closeFormBtn.addEventListener("click", () => {
     formContainer.classList.add("hidden");
   });
 
-
+  // function for adding ingridients and procedures inside the form
   function addListItemWithEdit(inputElement, listElement, textClassName) {
     const value = inputElement.value.trim();
     if (value) {
@@ -226,15 +263,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
-  
+
   addIngredientBtn.addEventListener("click", function () {
     addListItemWithEdit(ingredientInput, ingredientList, "ingredient-text");
   });
-  
+
   addProcedureBtn.addEventListener("click", function () {
     addListItemWithEdit(procedureInput, procedureList, "ingredient-text");
   });
-  
+
   recipeForm.addEventListener("submit", function (event) {
     event.preventDefault();
     handleFormSubmission();
@@ -249,16 +286,16 @@ document.addEventListener("DOMContentLoaded", function () {
   //function for the new recipe submissions using POST method
   function handleFormSubmission() {
     const ingredients = [];
-   
-    ingredientList.querySelectorAll(".ingredient-text").forEach(function (item) {
+    ingredientList
+      .querySelectorAll(".ingredient-text")
+      .forEach(function (item) {
         ingredients.push(item.textContent.trim());
       });
 
     const procedures = [];
-    
     procedureList.querySelectorAll("li").forEach(function (item) {
-        procedures.push(item.textContent.trim());
-      });
+      procedures.push(item.textContent.trim());
+    });
 
     const newRecipeData = {
       name: recipeName.value,
@@ -272,7 +309,6 @@ document.addEventListener("DOMContentLoaded", function () {
     displayCards(newRecipeData);
     formContainer.classList.add("hidden");
 
-    // fetch("http://localhost:3000/recipes", {
     fetch("https://recipe-server-su9a.onrender.com/api/recipes", {
       method: "POST",
       headers: {
@@ -281,17 +317,23 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       body: JSON.stringify(newRecipeData),
     })
-      .then((res) => res.json())
-      .then((newdata) => console.log("recipe posted successfully", newdata));
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((newdata) => {
+        console.log("Recipe posted successfully", newdata);
+      })
+      .catch((error) => {
+        console.error("Error posting recipe:", error);
+        alert("Failed to post recipe. Please try again.");
+      });
   }
 
-  //function for editing the ingridients and procedures
-
- 
-
-  let slideIndex = 0;
-
   // Function to show slides
+  let slideIndex = 0;
   function showSlides() {
     let slides = document.querySelectorAll(".slide");
     // Hide all slides
@@ -305,12 +347,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show the current slide
     slides[slideIndex - 1].style.display = "block";
     setTimeout(showSlides, 3000);
-  }
-
-  // Function to change slide manually
-  function changeSlide(n) {
-    slideIndex += n - 1;
-    showSlides();
   }
 
   // Start the slideshow
