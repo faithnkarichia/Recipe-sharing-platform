@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let recipeCard = document.createElement("div");
     recipeCard.classList.add("recipe-card");
 
+    // Conditionally set the heart icon based on recipe.loves
     const heartIcon = recipe.loves > 0 ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
 
     recipeCard.innerHTML = `
@@ -73,10 +74,12 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
 
             // Toggle "love"
-            if (loveButton.querySelector('.fa-regular')) { 
+            if (loveButton.querySelector('.fa-regular')) {
                 addLoves(recipe, loveButton);
             } else {
-                removeLove(recipe, loveButton); 
+              //if solid heart is present, add the love first, then remove it.
+                
+                removeLove(recipe, loveButton);
             }
         });
     }
@@ -138,7 +141,7 @@ function removeLove(recipe, loveButton) {
         }
 
         if (loveButton) {
-            loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-regular fa-heart"></i>`; 
+            loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-regular fa-heart"></i>`; // Regular heart
         }
         displayMostLovedRecipes();
     })
@@ -148,8 +151,6 @@ function removeLove(recipe, loveButton) {
 
     return recipe.loves;
 }
-
-
   //function for displaying most loved recipes on the aside
   function displayMostLovedRecipes() {
     lovedRecipesList.innerHTML = "";
