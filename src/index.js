@@ -21,8 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const recipeImage = document.getElementById("recipeImage");
   const recipeOwner = document.getElementById("recipeOwner");
   let recipes = [];
-  let slidePrev = document.querySelector(".prev");
-  let slideNext = document.querySelector(".next");
 
   //function for getting all the recipes using GET method
 
@@ -47,8 +45,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let recipeCard = document.createElement("div");
     recipeCard.classList.add("recipe-card");
 
-    // Conditionally set the heart icon based on recipe.loves
-    const heartIcon = recipe.loves > 0 ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+    const heartIcon =
+      recipe.loves > 0
+        ? '<i class="fa-solid fa-heart"></i>'
+        : '<i class="fa-regular fa-heart"></i>';
 
     recipeCard.innerHTML = `
         <h3 class="recipe-title">${recipe.name}</h3>
@@ -63,94 +63,91 @@ document.addEventListener("DOMContentLoaded", function () {
     recipeCardsContainer.appendChild(recipeCard);
 
     recipeCard.addEventListener("click", () => {
-        mainRecipeCard(recipe);
+      mainRecipeCard(recipe);
     });
 
     const loveButton = recipeCard.querySelector(".love-btn");
 
     if (loveButton) {
-        loveButton.addEventListener("click", (event) => {
-            event.stopPropagation();
-            event.preventDefault();
+      loveButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
 
-            
-            if (loveButton.querySelector('.fa-regular')) {
-                addLoves(recipe, loveButton);
-            } else {
-              
-                
-                removeLove(recipe, loveButton);
-            }
-        });
+        if (loveButton.querySelector(".fa-regular")) {
+          addLoves(recipe, loveButton);
+        } else {
+          removeLove(recipe, loveButton);
+        }
+      });
     }
-}
+  }
 
-function addLoves(recipe, loveButton) {
+  function addLoves(recipe, loveButton) {
     if (!recipe.loves) {
-        recipe.loves = 0;
+      recipe.loves = 0;
     }
     recipe.loves++;
 
     fetch(`https://recipe-server-su9a.onrender.com/api/recipes/${recipe.id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify({ loves: recipe.loves }),
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ loves: recipe.loves }),
     })
-    .then((res) => res.json())
-    .then((updatedRecipe) => {
+      .then((res) => res.json())
+      .then((updatedRecipe) => {
         console.log("Loves updated:", updatedRecipe);
         const index = recipes.findIndex((r) => r.id === recipe.id);
         if (index !== -1) {
-            recipes[index].loves = updatedRecipe.loves;
+          recipes[index].loves = updatedRecipe.loves;
         }
 
         if (loveButton) {
-            loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-solid fa-heart"></i>`; // Filled heart
+          loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-solid fa-heart"></i>`; // Filled heart
         }
         displayMostLovedRecipes();
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.error("Error updating loves:", error);
-    });
+      });
 
     return recipe.loves;
-}
+  }
 
-function removeLove(recipe, loveButton) {
+  function removeLove(recipe, loveButton) {
     if (recipe.loves > 0) {
-        recipe.loves--;
+      recipe.loves--;
     }
 
     fetch(`https://recipe-server-su9a.onrender.com/api/recipes/${recipe.id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify({ loves: recipe.loves }),
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ loves: recipe.loves }),
     })
-    .then((res) => res.json())
-    .then((updatedRecipe) => {
+      .then((res) => res.json())
+      .then((updatedRecipe) => {
         console.log("Love removed:", updatedRecipe);
         const index = recipes.findIndex((r) => r.id === recipe.id);
         if (index !== -1) {
-            recipes[index].loves = updatedRecipe.loves;
+          recipes[index].loves = updatedRecipe.loves;
         }
 
         if (loveButton) {
-            loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-regular fa-heart"></i>`; // Regular heart
+          loveButton.innerHTML = `${updatedRecipe.loves}<i class="fa-regular fa-heart"></i>`; // Regular heart
         }
         displayMostLovedRecipes();
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.error("Error removing love:", error);
-    });
+      });
 
     return recipe.loves;
-}
+  }
   //function for displaying most loved recipes on the aside
   function displayMostLovedRecipes() {
     lovedRecipesList.innerHTML = "";
@@ -173,7 +170,6 @@ function removeLove(recipe, loveButton) {
     });
   }
 
-  
   //this is the funnction for searching for a recipe
   function search() {
     let searchValue = searchText.value.trim().toLowerCase();
@@ -294,7 +290,8 @@ function removeLove(recipe, loveButton) {
       });
 
     const procedures = [];
-    procedureList.querySelectorAll("li").forEach(function (item) {
+
+    procedureList.querySelectorAll(".ingredient-text").forEach(function (item) {
       procedures.push(item.textContent.trim());
     });
 
